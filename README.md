@@ -1,38 +1,38 @@
-# Chatbot de Soporte Técnico - ISP Argentina
+# Chatbot de Asistencia Tecnica para Proveedor de Internet - ISP Argentina
 
-## Descripción
-Chatbot simulador de soporte técnico para una empresa de servicios de Internet.
-Desarrollado como Trabajo Práctico Integrador de Organización Empresarial - UTN.
+## Descripción General
+Aplicación de chatbot diseñada para simular el proceso de atención y soporte técnico de una empresa proveedora de servicios de Internet. Este proyecto fue desarrollado como Trabajo Práctico Integrador de la materia Organización Empresarial en la UTN.
 
-## Proceso automatizado
-Gestión de consultas técnicas de clientes: 
-1. Validación de identidad 
-2. Clasificación del problema
-3. Derivación a técnico si corresponde.
+## Funcionalidades Principales
+El sistema automatiza la atención de consultas técnicas mediante las siguientes etapas:
 
-## Tecnologías utilizadas
+1. Verificación de la identidad del cliente.
+2. Identificación y categorización del inconveniente reportado.
+3. Escalamiento del caso a un técnico especializado cuando sea necesario.
+
+## Tecnologías Implementadas
 - HTML5
 - JavaScript (vanilla)
 - Base de datos simulada en JSON
 
-## Cómo ejecutar
+## Instrucciones de Uso
 1. Clonar el repositorio
 2. Abrir el archivo `index.html` en cualquier navegador
-3. No requiere instalación ni servidor
+3. No se requiere instalación de dependencias ni configuración de servidor.
 
-## Flujo del bot
-1. El cliente ingresa su DNI
-2. El sistema valida si existe en la base de datos
-3. El cliente selecciona el tipo de problema
-4. El bot sugiere soluciones paso a paso
-5. Si no se resuelve, se genera un ticket y se deriva a un técnico
+## Funcionamiento del Chatbot
+1. El usuario ingresa su DNI
+2. El sistema verifica la existencia y estado del cliente en la base de datos.
+3. El usuario selecciona la categoría del problema que desea resolver.
+4. El chatbot proporciona recomendaciones y pasos de solución.
+5. Si el inconveniente persiste, se genera un ticket de soporte y el caso es derivado a un técnico.
 
-## Clientes de prueba
+## Datos de Prueba
 | DNI | Estado |
 |-----|--------|
 | 12345678 | Activo |
 | 87654321 | Activo |
 | 11111111 | Suspendido |
 
-## Diagrama BPMN
-Ver archivo `diagram.svg` en este repositorio.
+## Documentación del Proceso
+El diagrama BPMN correspondiente al flujo de atención puede consultarse en el archivo`diagram.svg` incluido en este repositorio.
