@@ -5,8 +5,10 @@ Chatbot simulador de soporte técnico para una empresa de servicios de Internet.
 Desarrollado como Trabajo Práctico Integrador de Organización Empresarial - UTN.
 
 ## Proceso automatizado
-Gestión de consultas técnicas de clientes: validación de identidad,
-clasificación del problema y derivación a técnico si corresponde.
+Gestión de consultas técnicas de clientes: 
+1. Validación de identidad 
+2. Clasificación del problema
+3. Derivación a técnico si corresponde.
 
 ## Tecnologías utilizadas
 - HTML5
