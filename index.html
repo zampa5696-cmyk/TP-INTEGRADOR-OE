@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte Técnico - ISP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 420px;
+            height: 620px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #0066cc;
+            color: white;
+            padding: 16px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+
+        .chat-header h2 {
+            font-size: 16px;
+        }
+
+        .chat-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mensaje-bot {
+            background: #f0f2f5;
+            padding: 10px 14px;
+            border-radius: 0 12px 12px 12px;
+            max-width: 80%;
+            font-size: 14px;
+            align-self: flex-start;
+        }
+
+        .mensaje-usuario {
+            background: #0066cc;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 12px 0 12px 12px;
+            max-width: 80%;
+            font-size: 14px;
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 12px;
+            border-top: 1px solid #e0e0e0;
+            gap: 8px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .chat-input button:hover {
+            background: #0052a3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>🌐 Soporte Técnico ISP</h2>
+        <p>Asistente virtual de soporte</p>
+    </div>
+    <div class="chat-messages" id="mensajes"></div>
+    <div class="chat-input">
+        <input type="text" id="inputUsuario" placeholder="Escribí tu respuesta..." />
+        <button onclick="procesarInput()">Enviar</button>
+    </div>
+</div>
+
+<script>
+    // ── BASE DE DATOS SIMULADA ──
+    const clientes = [
+        { dni: "12345678", nombre: "Juan", apellido: "García", plan: "100mb", estado: "activo" },
+        { dni: "87654321", nombre: "María", apellido: "López", plan: "50mb", estado: "activo" },
+        { dni: "11111111", nombre: "Carlos", apellido: "Pérez", plan: "200mb", estado: "suspendido" }
+    ]
+
+    // ── MÁQUINA DE ESTADOS ──
+    // Esta variable guarda en qué paso del proceso está el usuario
+    let estado = "esperando_dni"
+    let clienteActual = null
+    let ticketNumero = Math.floor(Math.random() * 90000) + 10000
+
+    // ── FUNCIÓN PARA MOSTRAR MENSAJES ──
+    function agregarMensaje(texto, tipo) {
+        const contenedor = document.getElementById("mensajes")
+        const mensaje = document.createElement("div")
+        mensaje.className = tipo === "bot" ? "mensaje-bot" : "mensaje-usuario"
+        mensaje.innerHTML = texto
+        contenedor.appendChild(mensaje)
+        contenedor.scrollTop = contenedor.scrollHeight
+    }
+
+    // ── FUNCIÓN PRINCIPAL — PROCESA LO QUE ESCRIBE EL USUARIO ──
+    function procesarInput() {
+        const input = document.getElementById("inputUsuario")
+        const texto = input.value.trim()
+
+        // Valida que no esté vacío
+        if (texto === "") return
+
+        // Muestra el mensaje del usuario
+        agregarMensaje(texto, "usuario")
+        input.value = ""
+
+        // Según el estado actual, el bot responde distinto
+        if (estado === "esperando_dni") {
+            manejarDNI(texto)
+        } else if (estado === "esperando_problema") {
+            manejarProblema(texto)
+        } else if (estado === "esperando_resolucion") {
+            manejarResolucion(texto)
+        } else if (estado === "esperando_descripcion") {
+            manejarDescripcion(texto)
+        }
+    }
+
+    // ── ESTADO 1: VALIDAR DNI ──
+    function manejarDNI(texto) {
+        // Busca el cliente en la base de datos
+        const cliente = clientes.find(c => c.dni === texto)
+
+        if (!cliente) {
+            // Camino infeliz — DNI no encontrado
+            agregarMensaje("❌ No encontramos tu DNI en el sistema. Por favor comunicáte al <b>0800-333-4567</b>.", "bot")
+            estado = "fin"
+            return
+        }
+
+        if (cliente.estado === "suspendido") {
+            // Camino infeliz — cuenta suspendida
+            agregarMensaje(`⚠️ Hola <b>${cliente.nombre}</b>, tu cuenta está <b>suspendida</b>. Por favor regularizá tu situación llamando al <b>0800-333-4567</b>.`, "bot")
+            estado = "fin"
+            return
+        }
+
+        // Cliente válido — guarda el cliente y avanza
+        clienteActual = cliente
+        agregarMensaje(`✅ Cliente verificado. Bienvenido <b>${cliente.nombre} ${cliente.apellido}</b>.<br>Plan actual: <b>${cliente.plan}</b>`, "bot")
+
+        setTimeout(() => {
+            agregarMensaje("¿Cuál es tu problema? Escribí el número:<br><br><b>1</b> - Sin conexión total<br><b>2</b> - Conexión lenta<br><b>3</b> - Problema con el router", "bot")
+            estado = "esperando_problema"
+        }, 800)
+    }
+
+    // ── ESTADO 2: CLASIFICAR PROBLEMA ──
+    function manejarProblema(texto) {
+        if (texto === "1") {
+            agregarMensaje("🔌 <b>Sin conexión total.</b> Seguí estos pasos:<br><br>1. Apagá el router 30 segundos y volvé a encenderlo<br>2. Verificá que todos los cables estén bien conectados<br>3. Esperá 2 minutos y revisá si volvió la conexión", "bot")
+        } else if (texto === "2") {
+            agregarMensaje("🐌 <b>Conexión lenta.</b> Seguí estos pasos:<br><br>1. Desconectá dispositivos que no estés usando<br>2. Reiniciá el router<br>3. Si usás WiFi, acercate al router<br>4. Verificá que no haya descargas en segundo plano", "bot")
+        } else if (texto === "3") {
+            agregarMensaje("📡 <b>Problema con el router.</b> Seguí estos pasos:<br><br>1. ¿Las luces del router están encendidas?<br>2. Reiniciá el router desenchufándolo 30 segundos<br>3. Verificá que el cable de red esté bien conectado", "bot")
+        } else {
+            // Camino infeliz — entrada inválida
+            agregarMensaje("⚠️ Opción inválida. Por favor escribí <b>1</b>, <b>2</b> o <b>3</b>.", "bot")
+            return
+        }
+
+        setTimeout(() => {
+            agregarMensaje("¿Se resolvió tu problema?<br><br><b>1</b> - Sí, se resolvió<br><b>2</b> - No, sigue el problema", "bot")
+            estado = "esperando_resolucion"
+        }, 800)
+    }
+
+    // ── ESTADO 3: ¿SE RESOLVIÓ? ──
+    function manejarResolucion(texto) {
+        if (texto === "1") {
+            agregarMensaje(`✅ ¡Qué bueno! Problema resuelto.<br><br>📋 Ticket <b>#${ticketNumero}</b> cerrado como <b>RESUELTO</b>.<br>Gracias por contactarnos, ${clienteActual.nombre}.`, "bot")
+            estado = "fin"
+        } else if (texto === "2") {
+            agregarMensaje("Entendemos. Por favor <b>describí tu problema con detalle</b> para derivarte con un técnico.", "bot")
+            estado = "esperando_descripcion"
+        } else {
+            // Camino infeliz — entrada inválida
+            agregarMensaje("⚠️ Opción inválida. Escribí <b>1</b> si se resolvió o <b>2</b> si no.", "bot")
+        }
+    }
+
+    // ── ESTADO 4: DESCRIPCIÓN Y DERIVACIÓN ──
+    function manejarDescripcion(texto) {
+        if (texto.length < 10) {
+            // Camino infeliz — descripción muy corta
+            agregarMensaje("⚠️ Por favor describí el problema con más detalle.", "bot")
+            return
+        }
+
+        agregarMensaje(`📋 Ticket <b>#${ticketNumero}</b> generado como <b>PENDIENTE</b>.<br><br>Un técnico se comunicará con vos en las próximas <b>24 horas</b>.<br>Gracias, ${clienteActual.nombre}.`, "bot")
+        estado = "fin"
+    }
+
+    // ── ENTER PARA ENVIAR ──
+    document.getElementById("inputUsuario").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") procesarInput()
+    })
+
+    // ── MENSAJE INICIAL DEL BOT ──
+    window.onload = () => {
+        agregarMensaje("👋 Hola, bienvenido al soporte técnico de <b>ISP Argentina</b>.<br><br>Para comenzar, ingresá tu <b>DNI</b> (sin puntos).", "bot")
+    }
+</script>
+
+</body>
+</html>
